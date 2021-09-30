@@ -4,6 +4,7 @@ import "./Game.css";
 import Navigation from "../Navigation/Navigation";
 import StatTracker from "../StatTracker/StatTracker";
 import { FormControl, InputLabel, Input } from "@mui/material";
+import { Slider } from "@mui/material";
 
 export default function Game(props) {
     const [size, setSize] = useState(5);
@@ -14,7 +15,7 @@ export default function Game(props) {
     const [gameStarted, setGameStarted] = useState(false);
     const [gameRunning, setGameRunning] = useState(false);
     const [interval, setInterval] = useState(1000);
-    const [stats, setStats] = useState({generation: 0, population: 0});
+    const [stats, setStats] = useState({ generation: 0, population: 0 });
 
     const iterationTimerRef = useRef();
     //const stateRef = useRef(stateBoard);
@@ -53,8 +54,8 @@ export default function Game(props) {
         }
 
         // count alive cells
-        const counter = stateBoard.flat().filter(e => e === true).length;
-        setStats({...stats, population: counter});
+        const counter = stateBoard.flat().filter((e) => e === true).length;
+        setStats({ ...stats, population: counter });
     }, [stateBoard]);
 
     // automatic play
@@ -72,11 +73,10 @@ export default function Game(props) {
     const initiateGame = () => {
         setGameStarted(false);
         setGameRunning(false);
-        setStats({generation: 0, cellsAlive: 0});
+        setStats({ generation: 0, cellsAlive: 0 });
         setStateBoard([]);
         setInitialStateBoard([]);
         initiateNewStateBoard();
-        
     };
 
     const initiateNewStateBoard = () => {
@@ -91,7 +91,7 @@ export default function Game(props) {
         }
 
         setStateBoard(newStateBoard);
-    }
+    };
 
     const countAliveNeighbours = (cellx, celly) => {
         let numberOfAliveNeighbours = 0;
@@ -163,21 +163,20 @@ export default function Game(props) {
     const resetGame = () => {
         setGameStarted(false);
         setGameRunning(false);
-        setStats({generation: 0, population: 0});
+        setStats({ generation: 0, population: 0 });
         setStateBoard(initialStateBoard);
-    }
+    };
 
     const play = (board = stateBoard) => {
         setGameStarted(true);
 
-        
-        if(initialStateBoard.length === 0) {
+        if (initialStateBoard.length === 0) {
             setInitialStateBoard(board);
         }
 
         let newStateBoard = [];
         const newGenNumber = stats.generation + 1;
-        setStats({...stats, generation: newGenNumber})
+        setStats({ ...stats, generation: newGenNumber });
         console.log("Playing...");
         console.log("Next gen: " + newGenNumber);
         newStateBoard = nextGeneration(board);
@@ -189,6 +188,11 @@ export default function Game(props) {
         setSize(value);
     };
 
+    const onIntervalChangeHandler = (event) => {
+        const { value } = event.target;
+        setInterval(value);
+    }
+
     const stopGame = () => {
         if (gameRunning) {
             setGameRunning(false);
@@ -198,7 +202,10 @@ export default function Game(props) {
 
     return (
         <React.Fragment>
-            <StatTracker generation={stats.generation} population={stats.population} ></StatTracker>
+            <StatTracker
+                generation={stats.generation}
+                population={stats.population}
+            ></StatTracker>
             <div
                 className="container"
                 style={{
@@ -213,17 +220,42 @@ export default function Game(props) {
                     <InputLabel htmlFor="component-simple">
                         Gameboard size:
                     </InputLabel>
-                    <Input id="gameboardsize" value={size} onChange={(event) => onSizeChangeHandler(event)} />
+                    <Input
+                        id="gameboardsize"
+                        value={size}
+                        onChange={(event) => onSizeChangeHandler(event)}
+                    />
                 </FormControl>
             </div>
+            <div>
+            <p>Change simulation speed: </p>
+            <Slider
+                size="small"
+                defaultValue={1000}
+                min={200}
+                max={2000}
+                marks
+                step={200}
+                aria-label="Small"
+                valueLabelDisplay="auto"
+                onChange={(event) => onIntervalChangeHandler(event)}
+                style={{position: "", width: "50%"}}
+            />
+            </div>
             <Navigation
-            initiateGame={initiateGame}
-            resetGame={resetGame}
-            nextGen={play}
-            startGame={startGame}
-            stopGame={stopGame}
-            onSizeChangeHandler={setSize}
+                initiateGame={initiateGame}
+                resetGame={resetGame}
+                nextGen={play}
+                startGame={startGame}
+                stopGame={stopGame}
+                onSizeChangeHandler={setSize}
             ></Navigation>
+            <div>
+                <h2>
+                    Type in the size of the gameboard you want and press "New
+                    game".
+                </h2>
+            </div>
         </React.Fragment>
     );
 }
