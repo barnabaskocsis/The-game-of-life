@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import Cell from "../Cell/Cell";
 import "./Game.css";
+import Navigation from "../Navigation/Navigation";
+import { FormControl, InputLabel, Input } from "@mui/material";
 
 export default function Game(props) {
     const [size, setSize] = useState(5);
@@ -164,9 +166,10 @@ export default function Game(props) {
         setStateBoard(initialStateBoard);
     }
 
-    const play = (board) => {
+    const play = (board = stateBoard) => {
         setGameStarted(true);
 
+        
         if(initialStateBoard.length === 0) {
             setInitialStateBoard(board);
         }
@@ -180,19 +183,12 @@ export default function Game(props) {
         setStateBoard(newStateBoard);
     };
 
-    const test = () => {
-        console.log(gameBoard);
-        console.log(stateBoard);
-        console.log(countAliveNeighbours(2, 2));
-        console.log(decideFate(2, 2));
-    };
-
     const onSizeChangeHandler = (event) => {
         const { value } = event.currentTarget;
         setSize(value);
     };
 
-    const onStopHandler = () => {
+    const stopGame = () => {
         if (gameRunning) {
             setGameRunning(false);
             clearTimeout(iterationTimerRef.current);
@@ -219,20 +215,21 @@ export default function Game(props) {
                 {gameBoard}
             </div>
             <div style={{ margin: "20px" }}>
-                <input
-                    type="text"
-                    value={size}
-                    onChange={(event) => onSizeChangeHandler(event)}
-                ></input>
-                <button onClick={initiateGame}>SET UP</button>
-                <button onClick={resetGame}>RESET</button>
-                <button onClick={test}>TEST</button>
-                <button onClick={() => play(stateBoard)}>NEXT GEN</button>
-                <button onClick={startGame}>START</button>
-                <button onClick={onStopHandler}>STOP</button>
+                <FormControl variant="standard">
+                    <InputLabel htmlFor="component-simple">
+                        Gameboard size:
+                    </InputLabel>
+                    <Input id="gameboardsize" value={size} onChange={(event) => onSizeChangeHandler(event)} />
+                </FormControl>
             </div>
-            <div>{stateBoard.toString()}</div>
-            <div></div>
+            <Navigation
+            initiateGame={initiateGame}
+            resetGame={resetGame}
+            nextGen={play}
+            startGame={startGame}
+            stopGame={stopGame}
+            onSizeChangeHandler={setSize}
+            ></Navigation>
         </React.Fragment>
     );
 }
