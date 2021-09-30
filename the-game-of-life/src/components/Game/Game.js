@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Cell from "../Cell/Cell";
 import "./Game.css";
 import Navigation from "../Navigation/Navigation";
+import StatTracker from "../StatTracker/StatTracker";
 import { FormControl, InputLabel, Input } from "@mui/material";
 
 export default function Game(props) {
@@ -13,7 +14,7 @@ export default function Game(props) {
     const [gameStarted, setGameStarted] = useState(false);
     const [gameRunning, setGameRunning] = useState(false);
     const [interval, setInterval] = useState(1000);
-    const [stats, setStats] = useState({generation: 0, cellsAlive: 0});
+    const [stats, setStats] = useState({generation: 0, population: 0});
 
     const iterationTimerRef = useRef();
     //const stateRef = useRef(stateBoard);
@@ -53,7 +54,7 @@ export default function Game(props) {
 
         // count alive cells
         const counter = stateBoard.flat().filter(e => e === true).length;
-        setStats({...stats, cellsAlive: counter});
+        setStats({...stats, population: counter});
     }, [stateBoard]);
 
     // automatic play
@@ -162,7 +163,7 @@ export default function Game(props) {
     const resetGame = () => {
         setGameStarted(false);
         setGameRunning(false);
-        setStats({generation: 0, cellsAlive: 0});
+        setStats({generation: 0, population: 0});
         setStateBoard(initialStateBoard);
     }
 
@@ -195,16 +196,9 @@ export default function Game(props) {
         }
     };
 
-    const statsDiv = (
-        <div>
-            <p>Generation: {stats.generation}</p>
-            <p>Alive cells: {stats.cellsAlive}</p>
-        </div>
-    )
-
     return (
         <React.Fragment>
-            <div className="statsDiv">{statsDiv}</div>
+            <StatTracker generation={stats.generation} population={stats.population} ></StatTracker>
             <div
                 className="container"
                 style={{
