@@ -6,6 +6,7 @@ export default function Game(props) {
     const [size, setSize] = useState(5);
     const [gameBoard, setGameBoard] = useState([]);
     const [stateBoard, setStateBoard] = useState([]);
+    const [initialStateBoard, setInitialStateBoard] = useState([]);
     const [cellState, setCellState] = useState([]);
     const [gameStarted, setGameStarted] = useState(false);
     const [gameRunning, setGameRunning] = useState(false);
@@ -64,13 +65,15 @@ export default function Game(props) {
         }
     }, [gameRunning, stateBoard]);
 
-    // initiate and reset board
+    // initiate and clear board
     const initiateGame = () => {
         setGameStarted(false);
         setGameRunning(false);
         setStats({generation: 0, cellsAlive: 0});
         setStateBoard([]);
+        setInitialStateBoard([]);
         initiateNewStateBoard();
+        
     };
 
     const initiateNewStateBoard = () => {
@@ -154,8 +157,20 @@ export default function Game(props) {
         setGameRunning(true);
     };
 
+    const resetGame = () => {
+        setGameStarted(false);
+        setGameRunning(false);
+        setStats({generation: 0, cellsAlive: 0});
+        setStateBoard(initialStateBoard);
+    }
+
     const play = (board) => {
         setGameStarted(true);
+
+        if(initialStateBoard.length === 0) {
+            setInitialStateBoard(board);
+        }
+
         let newStateBoard = [];
         const newGenNumber = stats.generation + 1;
         setStats({...stats, generation: newGenNumber})
@@ -184,14 +199,6 @@ export default function Game(props) {
         }
     };
 
-    /* const userList = (
-        <List>
-          {userSearches.map((user) => (
-            <UserListItem user={user} newChat={() => newChatHandler(user)} />
-          ))}
-        </List>
-      ); */
-
     const statsDiv = (
         <div>
             <p>Generation: {stats.generation}</p>
@@ -218,7 +225,7 @@ export default function Game(props) {
                     onChange={(event) => onSizeChangeHandler(event)}
                 ></input>
                 <button onClick={initiateGame}>SET UP</button>
-                <button onClick={initiateGame}>RESET</button>
+                <button onClick={resetGame}>RESET</button>
                 <button onClick={test}>TEST</button>
                 <button onClick={() => play(stateBoard)}>NEXT GEN</button>
                 <button onClick={startGame}>START</button>
