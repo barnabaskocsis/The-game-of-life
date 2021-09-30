@@ -7,45 +7,17 @@ export default function Navigation(props) {
         <div style={{ margin: "20px" }}>
             <Button
                     variant="contained"
-                    onClick={() => props.initiateGame(true)}
+                    onClick={() => props.initiateGame(true,[])}
                     color="secondary"
                 >
                     🎲RANDOM🎲
                 </Button>
             <Button
                     variant="contained"
-                    onClick={() => props.initiateGame()}
+                    onClick={() => props.initiateGame(false,[])}
                 >
                     NEW GAME
                 </Button>
-            <Button
-                variant="contained"
-                color="info"
-                onClick={() => props.resetGame()}
-            >
-                RESET
-            </Button>
-            <Button
-                variant="contained"
-                color="warning"
-                onClick={() => props.nextGen()}
-            >
-                NEXT GEN
-            </Button>
-            <Button
-                variant="contained"
-                color="success"
-                onClick={() => props.startGame()}
-            >
-                START
-            </Button>
-            <Button
-                variant="contained"
-                color="error"
-                onClick={() => props.stopGame()}
-            >
-                STOP
-            </Button>
         </div>
     );
 }

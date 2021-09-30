@@ -3,17 +3,14 @@ import Cell from "../Cell/Cell";
 import "./Game.css";
 import Navigation from "../Navigation/Navigation";
 import StatTracker from "../StatTracker/StatTracker";
-import {
-    FormControl,
-    InputLabel,
-    Input,
-} from "@mui/material";
+import { FormControl, InputLabel, Input } from "@mui/material";
 import { Divider } from "@mui/material";
 import { Slider } from "@mui/material";
 import EmojiSelecter from "../EmojiSelecter/EmojiSelecter";
+import GameControls from "../Navigation/GameControls";
 
 export default function Game(props) {
-    const [size, setSize] = useState(5);
+    const [size, setSize] = useState(30);
     const [gameBoard, setGameBoard] = useState([]);
     const [stateBoard, setStateBoard] = useState([]);
     const [initialStateBoard, setInitialStateBoard] = useState([]);
@@ -26,6 +23,7 @@ export default function Game(props) {
 
     const iterationTimerRef = useRef();
 
+    // update a cell on the board
     useEffect(() => {
         if (stateBoard.length !== 0 && gameStarted === false) {
             const x = cellState[0];
@@ -84,33 +82,33 @@ export default function Game(props) {
         }
     }, [stats.population]);
 
-    // initiate and clear board
-    const initiateGame = (seed) => {
+    // clear board and initiate it randomly or from a seed
+    const initiateGame = (random, seed) => {
         setGameStarted(false);
         setGameRunning(false);
         setStats({ generation: 0, cellsAlive: 0 });
         setStateBoard([]);
         setInitialStateBoard([]);
-        console.log(seed);
-        if(seed) {
+        if (random) {
             generateRandomStateBoard();
+        } else if (seed.length !== 0) {
+            generateStateBoardFromSeed();
         } else {
             initiateNewStateBoard();
         }
-        
     };
 
     // generate state board with default false values
     const initiateNewStateBoard = () => {
         const newStateBoard = [];
 
-            for (let i = 0; i < size; ++i) {
-                const tempArray = [];
-                for (let j = 0; j < size; ++j) {
-                    tempArray.push(false);
-                }
-                newStateBoard.push(tempArray);
+        for (let i = 0; i < size; ++i) {
+            const tempArray = [];
+            for (let j = 0; j < size; ++j) {
+                tempArray.push(false);
             }
+            newStateBoard.push(tempArray);
+        }
 
         setStateBoard(newStateBoard);
     };
@@ -132,6 +130,10 @@ export default function Game(props) {
         setStateBoard(newStateBoard);
     };
 
+    const generateStateBoardFromSeed = (seed) => {
+        setStateBoard(seed);
+    };
+
     const countAliveNeighbours = (cellx, celly) => {
         let numberOfAliveNeighbours = 0;
 
@@ -149,7 +151,6 @@ export default function Game(props) {
         directions.forEach((direction, index) => {
             let x = direction[0] + cellx;
             let y = direction[1] + celly;
-            //let neighbour = false;
 
             if (0 <= x && x < size && 0 <= y && y < size) {
                 let neighbour = stateBoard[x][y];
@@ -250,21 +251,7 @@ export default function Game(props) {
 
     return (
         <React.Fragment>
-            <StatTracker
-                emoji={emojis.alive}
-                generation={stats.generation}
-                population={stats.population}
-            ></StatTracker>
-            <div
-                className="container"
-                style={{
-                    gridTemplateColumns: `repeat(${size}, 30px)`,
-                    gridTemplateRows: `repeat(${size}, 30px)`,
-                }}
-            >
-                {gameBoard}
-            </div>
-            <div style={{ margin: "20px" }}>
+            <div style={{ margin: "20px", padding: "20px" }}>
                 <FormControl variant="standard">
                     <InputLabel htmlFor="component-simple">
                         Gameboard size:
@@ -275,6 +262,22 @@ export default function Game(props) {
                         onChange={(event) => onSizeChangeHandler(event)}
                     />
                 </FormControl>
+            </div>
+
+            <p>Change the looks of your cells: </p>
+            <EmojiSelecter
+                emojis={emojis}
+                onEmojiChangehandler={(event) => onEmojiChangehandler(event)}
+            ></EmojiSelecter>
+            <Navigation
+                initiateGame={(random, seed) => initiateGame(random, seed)}
+            ></Navigation>
+            <div style={{justifyContent: "center"}}>
+                <h1>How to play:</h1>
+                <h3>Type in the size of the gameboard you want and</h3>
+                <h3>press "NEW GAME" to start with an empty board</h3>
+                <Divider textAlign="center" variant="middle">OR</Divider>
+                <h3>press "RANDOM" and see what you get.</h3>
             </div>
             <div>
                 <p>Change simulation speed: </p>
@@ -291,27 +294,26 @@ export default function Game(props) {
                     style={{ width: "50%" }}
                 />
             </div>
-            <p>Change the looks of your cells: </p>
-            <EmojiSelecter
-                emojis={emojis}
-                onEmojiChangehandler={(event) => onEmojiChangehandler(event)}
-            ></EmojiSelecter>
-            <Navigation
-                initiateGame={(seed) => initiateGame(seed)}
+            <StatTracker
+                emoji={emojis.alive}
+                generation={stats.generation}
+                population={stats.population}
+            ></StatTracker>
+            <GameControls
                 resetGame={resetGame}
                 nextGen={play}
                 startGame={startGame}
                 stopGame={stopGame}
                 onSizeChangeHandler={setSize}
-            ></Navigation>
-            <div>
-                <h1>How to play:</h1>
-                <h3>
-                    Type in the size of the gameboard you want and
-                </h3>
-                <h3>press "NEW GAME".</h3>
-                <Divider>OR</Divider>
-                <h3>press "RANDOM" and see what you get</h3>
+            ></GameControls>
+            <div
+                className="container"
+                style={{
+                    gridTemplateColumns: `repeat(${size}, 30px)`,
+                    gridTemplateRows: `repeat(${size}, 30px)`,
+                }}
+            >
+                {gameBoard}
             </div>
         </React.Fragment>
     );

@@ -1,4 +1,3 @@
-import { padding } from "@mui/system";
 import React from "react";
 
 export default function StatTracker(props) {

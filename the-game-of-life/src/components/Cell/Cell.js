@@ -9,7 +9,6 @@ export default function Cell(props) {
     }, [alive]);
 
     useEffect(() => {
-        console.log("alive: " + alive);
         setAlive(alive);
     }, [alive]);
 
