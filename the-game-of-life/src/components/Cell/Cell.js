@@ -2,18 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./Cell.css";
 
 export default function Cell(props) {
-    const [alive, setAlive] = useState(false);
-
-    useEffect(() => {
-        setAlive(props.alive);
-    }, [alive]);
-
-    useEffect(() => {
-        setAlive(alive);
-    }, [alive]);
 
     const onClickhandler = () => {
-        setAlive(!alive);
         props.onCellChange([props.x, props.y]);
     };
 

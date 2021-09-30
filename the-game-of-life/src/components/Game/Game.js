@@ -263,7 +263,6 @@ export default function Game(props) {
                     />
                 </FormControl>
             </div>
-
             <p>Change the looks of your cells: </p>
             <EmojiSelecter
                 emojis={emojis}
