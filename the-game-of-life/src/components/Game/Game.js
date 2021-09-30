@@ -10,8 +10,7 @@ export default function Game(props) {
     const [gameStarted, setGameStarted] = useState(false);
     const [gameRunning, setGameRunning] = useState(false);
     const [interval, setInterval] = useState(1000);
-
-    const [count, setCount] = useState(0);
+    const [stats, setStats] = useState({generation: 0, cellsAlive: 0});
 
     const iterationTimerRef = useRef();
     //const stateRef = useRef(stateBoard);
@@ -27,6 +26,7 @@ export default function Game(props) {
         }
     }, [cellState]);
 
+    // renders board visually
     useEffect(() => {
         if (stateBoard.length !== 0) {
             const newGameBoard = [];
@@ -47,20 +47,33 @@ export default function Game(props) {
             }
             setGameBoard(newGameBoard);
         }
+
+        // count alive cells
+        const counter = stateBoard.flat().filter(e => e === true).length;
+        setStats({...stats, cellsAlive: counter});
     }, [stateBoard]);
 
+    // automatic play
     useEffect(() => {
         if (gameRunning) {
             iterationTimerRef.current = setTimeout(() => {
                 play(stateBoard);
             }, interval);
         } else {
-            console.log("Game stopped");
+            console.log("Game stopped!");
         }
     }, [gameRunning, stateBoard]);
 
+    // initiate and reset board
     const initiateGame = () => {
         setGameStarted(false);
+        setGameRunning(false);
+        setStats({generation: 0, cellsAlive: 0});
+        setStateBoard([]);
+        initiateNewStateBoard();
+    };
+
+    const initiateNewStateBoard = () => {
         const newStateBoard = [];
 
         for (let i = 0; i < size; ++i) {
@@ -72,7 +85,7 @@ export default function Game(props) {
         }
 
         setStateBoard(newStateBoard);
-    };
+    }
 
     const countAliveNeighbours = (cellx, celly) => {
         let numberOfAliveNeighbours = 0;
@@ -138,13 +151,16 @@ export default function Game(props) {
     };
 
     const startGame = () => {
-        setGameStarted(true);
         setGameRunning(true);
     };
 
     const play = (board) => {
+        setGameStarted(true);
         let newStateBoard = [];
+        const newGenNumber = stats.generation + 1;
+        setStats({...stats, generation: newGenNumber})
         console.log("Playing...");
+        console.log("Next gen: " + newGenNumber);
         newStateBoard = nextGeneration(board);
         setStateBoard(newStateBoard);
     };
@@ -168,8 +184,24 @@ export default function Game(props) {
         }
     };
 
+    /* const userList = (
+        <List>
+          {userSearches.map((user) => (
+            <UserListItem user={user} newChat={() => newChatHandler(user)} />
+          ))}
+        </List>
+      ); */
+
+    const statsDiv = (
+        <div>
+            <p>Generation: {stats.generation}</p>
+            <p>Alive cells: {stats.cellsAlive}</p>
+        </div>
+    )
+
     return (
         <React.Fragment>
+            <div className="statsDiv">{statsDiv}</div>
             <div
                 className="container"
                 style={{
@@ -188,7 +220,8 @@ export default function Game(props) {
                 <button onClick={initiateGame}>SET UP</button>
                 <button onClick={initiateGame}>RESET</button>
                 <button onClick={test}>TEST</button>
-                <button onClick={startGame}>PLAY</button>
+                <button onClick={() => play(stateBoard)}>NEXT GEN</button>
+                <button onClick={startGame}>START</button>
                 <button onClick={onStopHandler}>STOP</button>
             </div>
             <div>{stateBoard.toString()}</div>
