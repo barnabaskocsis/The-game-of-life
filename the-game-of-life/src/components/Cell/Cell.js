@@ -23,8 +23,7 @@ export default function Cell(props) {
             className={`item ${props.alive ? "alive" : ""}`}
             onClick={() => onClickhandler()}
         >
-            {/* {props.x},{props.y},{props.alive ? "alive" : "dead"} */}
-            {/* {props.x},{props.y} */}
+            {props.alive ? props.emojiAlive : props.emojiDead}
         </div>
     );
 }

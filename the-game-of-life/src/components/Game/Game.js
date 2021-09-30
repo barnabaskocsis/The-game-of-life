@@ -3,8 +3,15 @@ import Cell from "../Cell/Cell";
 import "./Game.css";
 import Navigation from "../Navigation/Navigation";
 import StatTracker from "../StatTracker/StatTracker";
-import { FormControl, InputLabel, Input } from "@mui/material";
+import {
+    FormControl,
+    InputLabel,
+    Input,
+    Select,
+    MenuItem,
+} from "@mui/material";
 import { Slider } from "@mui/material";
+import EmojiSelecter from "../EmojiSelecter/EmojiSelecter";
 
 export default function Game(props) {
     const [size, setSize] = useState(5);
@@ -16,9 +23,9 @@ export default function Game(props) {
     const [gameRunning, setGameRunning] = useState(false);
     const [interval, setInterval] = useState(1000);
     const [stats, setStats] = useState({ generation: 0, population: 0 });
+    const [emojis, setEmojis] = useState({ alive: "😀", dead: "🤢" });
 
     const iterationTimerRef = useRef();
-    //const stateRef = useRef(stateBoard);
 
     useEffect(() => {
         if (stateBoard.length !== 0 && gameStarted === false) {
@@ -44,6 +51,8 @@ export default function Game(props) {
                             x={i}
                             y={j}
                             alive={stateBoard[i][j]}
+                            emojiAlive={emojis.alive}
+                            emojiDead={emojis.dead}
                             onCellChange={setCellState}
                         ></Cell>
                     );
@@ -68,6 +77,12 @@ export default function Game(props) {
             console.log("Game stopped!");
         }
     }, [gameRunning, stateBoard]);
+
+    useEffect(() => {
+        if (gameRunning && stats.population === 0) {
+            setGameRunning(false);
+        }
+    }, [stats.population]);
 
     // initiate and clear board
     const initiateGame = () => {
@@ -156,17 +171,6 @@ export default function Game(props) {
         return newBoard;
     };
 
-    const startGame = () => {
-        setGameRunning(true);
-    };
-
-    const resetGame = () => {
-        setGameStarted(false);
-        setGameRunning(false);
-        setStats({ generation: 0, population: 0 });
-        setStateBoard(initialStateBoard);
-    };
-
     const play = (board = stateBoard) => {
         setGameStarted(true);
 
@@ -183,6 +187,24 @@ export default function Game(props) {
         setStateBoard(newStateBoard);
     };
 
+    const startGame = () => {
+        setGameRunning(true);
+    };
+
+    const resetGame = () => {
+        setGameStarted(false);
+        setGameRunning(false);
+        setStats({ generation: 0, population: 0 });
+        setStateBoard(initialStateBoard);
+    };
+
+    const stopGame = () => {
+        if (gameRunning) {
+            setGameRunning(false);
+            clearTimeout(iterationTimerRef.current);
+        }
+    };
+
     const onSizeChangeHandler = (event) => {
         const { value } = event.currentTarget;
         setSize(value);
@@ -191,12 +213,14 @@ export default function Game(props) {
     const onIntervalChangeHandler = (event) => {
         const { value } = event.target;
         setInterval(value);
-    }
+    };
 
-    const stopGame = () => {
-        if (gameRunning) {
-            setGameRunning(false);
-            clearTimeout(iterationTimerRef.current);
+    const onEmojiChangehandler = (event) => {
+        const { value, name } = event.target;
+        if (name === "emojialive") {
+            setEmojis({ ...emojis, alive: value });
+        } else {
+            setEmojis({ ...emojis, dead: value });
         }
     };
 
@@ -228,20 +252,24 @@ export default function Game(props) {
                 </FormControl>
             </div>
             <div>
-            <p>Change simulation speed: </p>
-            <Slider
-                size="small"
-                defaultValue={1000}
-                min={200}
-                max={2000}
-                marks
-                step={200}
-                aria-label="Small"
-                valueLabelDisplay="auto"
-                onChange={(event) => onIntervalChangeHandler(event)}
-                style={{position: "", width: "50%"}}
-            />
+                <p>Change simulation speed: </p>
+                <Slider
+                    size="small"
+                    defaultValue={1000}
+                    min={200}
+                    max={2000}
+                    marks
+                    step={200}
+                    aria-label="Small"
+                    valueLabelDisplay="auto"
+                    onChange={(event) => onIntervalChangeHandler(event)}
+                    style={{ width: "50%" }}
+                />
             </div>
+            <EmojiSelecter
+                emojis={emojis}
+                onEmojiChangehandler={(event) => onEmojiChangehandler(event)}
+            ></EmojiSelecter>
             <Navigation
                 initiateGame={initiateGame}
                 resetGame={resetGame}
