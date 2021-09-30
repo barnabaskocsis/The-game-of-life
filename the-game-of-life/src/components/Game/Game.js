@@ -7,9 +7,8 @@ import {
     FormControl,
     InputLabel,
     Input,
-    Select,
-    MenuItem,
 } from "@mui/material";
+import { Divider } from "@mui/material";
 import { Slider } from "@mui/material";
 import EmojiSelecter from "../EmojiSelecter/EmojiSelecter";
 
@@ -306,10 +305,13 @@ export default function Game(props) {
                 onSizeChangeHandler={setSize}
             ></Navigation>
             <div>
-                <h2>
-                    Type in the size of the gameboard you want and press "New
-                    game".
-                </h2>
+                <h1>How to play:</h1>
+                <h3>
+                    Type in the size of the gameboard you want and
+                </h3>
+                <h3>press "NEW GAME".</h3>
+                <Divider>OR</Divider>
+                <h3>press "RANDOM" and see what you get</h3>
             </div>
         </React.Fragment>
     );
