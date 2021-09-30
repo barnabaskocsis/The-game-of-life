@@ -33,6 +33,7 @@ export default function EmojiSelecter(props) {
                         value={props.emojis.alive}
                         onChange={(event) => props.onEmojiChangehandler(event)}
                     >
+                        <MenuItem value={"⬛"}>⬛</MenuItem>
                         <MenuItem value={"😀"}>😀</MenuItem>
                         <MenuItem value={"🔷"}>🔷</MenuItem>
                         <MenuItem value={"😶"}>😶</MenuItem>
@@ -53,6 +54,7 @@ export default function EmojiSelecter(props) {
                         value={props.emojis.dead}
                         onChange={(event) => props.onEmojiChangehandler(event)}
                     >
+                        <MenuItem value={"⬜"}>⬜</MenuItem>
                         <MenuItem value={"🤢"}>🤢</MenuItem>
                         <MenuItem value={"🔶"}>🔶</MenuItem>
                         <MenuItem value={"👻"}>👻</MenuItem>

@@ -23,7 +23,7 @@ export default function Game(props) {
     const [gameRunning, setGameRunning] = useState(false);
     const [interval, setInterval] = useState(1000);
     const [stats, setStats] = useState({ generation: 0, population: 0 });
-    const [emojis, setEmojis] = useState({ alive: "😀", dead: "🤢" });
+    const [emojis, setEmojis] = useState({ alive: "⬛", dead: "⬜" });
 
     const iterationTimerRef = useRef();
 
@@ -212,7 +212,7 @@ export default function Game(props) {
 
     const onIntervalChangeHandler = (event) => {
         const { value } = event.target;
-        setInterval(value);
+        setInterval(value * 200);
     };
 
     const onEmojiChangehandler = (event) => {
@@ -227,6 +227,7 @@ export default function Game(props) {
     return (
         <React.Fragment>
             <StatTracker
+                emoji={emojis.alive}
                 generation={stats.generation}
                 population={stats.population}
             ></StatTracker>
@@ -255,17 +256,18 @@ export default function Game(props) {
                 <p>Change simulation speed: </p>
                 <Slider
                     size="small"
-                    defaultValue={1000}
-                    min={200}
-                    max={2000}
+                    defaultValue={5}
+                    min={1}
+                    max={10}
                     marks
-                    step={200}
+                    step={1}
                     aria-label="Small"
                     valueLabelDisplay="auto"
                     onChange={(event) => onIntervalChangeHandler(event)}
                     style={{ width: "50%" }}
                 />
             </div>
+            <p>Change the looks of your cells: </p>
             <EmojiSelecter
                 emojis={emojis}
                 onEmojiChangehandler={(event) => onEmojiChangehandler(event)}
