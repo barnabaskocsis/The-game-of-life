@@ -7,6 +7,13 @@ export default function Navigation(props) {
         <div style={{ margin: "20px" }}>
             <Button
                     variant="contained"
+                    onClick={() => props.initiateGame(true)}
+                    color="secondary"
+                >
+                    🎲RANDOM🎲
+                </Button>
+            <Button
+                    variant="contained"
                     onClick={() => props.initiateGame()}
                 >
                     NEW GAME

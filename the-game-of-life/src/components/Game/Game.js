@@ -78,6 +78,7 @@ export default function Game(props) {
         }
     }, [gameRunning, stateBoard]);
 
+    // stop the game if every cell dies
     useEffect(() => {
         if (gameRunning && stats.population === 0) {
             setGameRunning(false);
@@ -85,22 +86,46 @@ export default function Game(props) {
     }, [stats.population]);
 
     // initiate and clear board
-    const initiateGame = () => {
+    const initiateGame = (seed) => {
         setGameStarted(false);
         setGameRunning(false);
         setStats({ generation: 0, cellsAlive: 0 });
         setStateBoard([]);
         setInitialStateBoard([]);
-        initiateNewStateBoard();
+        console.log(seed);
+        if(seed) {
+            generateRandomStateBoard();
+        } else {
+            initiateNewStateBoard();
+        }
+        
     };
 
+    // generate state board with default false values
     const initiateNewStateBoard = () => {
         const newStateBoard = [];
+
+            for (let i = 0; i < size; ++i) {
+                const tempArray = [];
+                for (let j = 0; j < size; ++j) {
+                    tempArray.push(false);
+                }
+                newStateBoard.push(tempArray);
+            }
+
+        setStateBoard(newStateBoard);
+    };
+
+    // generate state board with random values
+    const generateRandomStateBoard = () => {
+        const newStateBoard = [];
+        let random = false;
 
         for (let i = 0; i < size; ++i) {
             const tempArray = [];
             for (let j = 0; j < size; ++j) {
-                tempArray.push(false);
+                random = Math.floor(Math.random() * 2);
+                tempArray.push(!!random);
             }
             newStateBoard.push(tempArray);
         }
@@ -273,7 +298,7 @@ export default function Game(props) {
                 onEmojiChangehandler={(event) => onEmojiChangehandler(event)}
             ></EmojiSelecter>
             <Navigation
-                initiateGame={initiateGame}
+                initiateGame={(seed) => initiateGame(seed)}
                 resetGame={resetGame}
                 nextGen={play}
                 startGame={startGame}
