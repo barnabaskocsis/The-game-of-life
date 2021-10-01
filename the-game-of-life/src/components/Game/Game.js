@@ -35,7 +35,7 @@ export default function Game(props) {
         }
     }, [cellState]);
 
-    // renders board visually
+    // renders the board visually every state update
     useEffect(() => {
         if (stateBoard.length !== 0) {
             const newGameBoard = [];
@@ -82,7 +82,7 @@ export default function Game(props) {
         }
     }, [stats.population]);
 
-    // clear board and initiate it randomly or from a seed
+    // clear board and initiate it blank, random or from a seed
     const initiateGame = (random, seed) => {
         setGameStarted(false);
         setGameRunning(false);
@@ -130,6 +130,7 @@ export default function Game(props) {
         setStateBoard(newStateBoard);
     };
 
+    // generate state board from seed
     const generateStateBoardFromSeed = (seed) => {
         setStateBoard(seed);
     };
@@ -196,6 +197,7 @@ export default function Game(props) {
         return newBoard;
     };
 
+    // playing out an iteration
     const play = (board = stateBoard) => {
         setGameStarted(true);
 
@@ -232,7 +234,9 @@ export default function Game(props) {
 
     const onSizeChangeHandler = (event) => {
         const { value } = event.currentTarget;
-        setSize(value);
+        if(!isNaN(value)){
+            setSize(value);
+        }
     };
 
     const onIntervalChangeHandler = (event) => {
@@ -272,11 +276,12 @@ export default function Game(props) {
                 initiateGame={(random, seed) => initiateGame(random, seed)}
             ></Navigation>
             <div style={{justifyContent: "center"}}>
-                <h1>How to play:</h1>
+                <h1>How to start:</h1>
                 <h3>Type in the size of the gameboard you want and</h3>
                 <h3>press "NEW GAME" to start with an empty board</h3>
                 <Divider textAlign="center" variant="middle">OR</Divider>
                 <h3>press "RANDOM" and see what you get.</h3>
+                <h5>(Important to press one of them every time you change the size)</h5>
             </div>
             <div>
                 <p>Change simulation speed: </p>
